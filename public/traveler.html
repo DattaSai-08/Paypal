@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Traveller's agent</title>
+  <link rel="stylesheet" href="/app.css">
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand"><h1>Your travel agent</h1><span>books this property through its MCP endpoint and pays from your saved PayPal, inside the budget you set</span></div>
+    <nav class="nav"><a href="/">Front desk</a><a href="/traveler" class="active">Traveller's agent</a><a href="/owner">Owner</a></nav>
+  </header>
+  <main class="traveler">
+    <section class="setup">
+      <h2>1. Who is travelling</h2>
+      <p class="small muted">The agent books in your name. The property only ever sees a payment token, never your PayPal login.</p>
+      <div class="field"><label>Name</label><input id="t-name" value="Noor Rahman"></div>
+      <div class="field"><label>Email</label><input id="t-email" value="noor.rahman@example.com"></div>
+      <div class="row">
+        <div class="field grow"><label>Total budget (USD)</label><input id="t-budget" type="number" value="900"></div>
+        <div class="field grow"><label>Nightly cap (optional)</label><input id="t-cap" type="number" placeholder="none"></div>
+      </div>
+      <button class="primary" id="t-create">Create traveller</button>
+      <p class="status-line" id="t-status"></p>
+
+      <h2 style="margin-top:22px">2. One-time PayPal consent</h2>
+      <p class="small muted">Save PayPal once. After this, the agent can pay deposits and balances without coming back to you, as long as it stays inside the budget.</p>
+      <div id="vault-mount"></div>
+      <p class="status-line" id="vault-status"></p>
+
+      <h2 style="margin-top:22px">3. The brief</h2>
+      <div class="row">
+        <div class="field grow"><label>Check-in</label><input id="b-in" type="date"></div>
+        <div class="field grow"><label>Check-out</label><input id="b-out" type="date"></div>
+        <div class="field" style="max-width:90px"><label>Guests</label><input id="b-guests" type="number" value="2" min="1"></div>
+      </div>
+      <div class="field"><label>Preference, in your words</label><input id="b-pref" value="a cottage with a fireplace, quiet"></div>
+      <p class="small">By sending your agent, you authorize the deposit and later balance collection for one stay within your displayed budget.</p>
+      <button class="primary" id="run" disabled>Authorize payment and send my agent</button>
+      <p class="small muted" style="margin-top:10px">Watch the right-hand side: every tool call is a real MCP request to the property, every payment is a real PayPal sandbox call.</p>
+    </section>
+    <section>
+      <h2>Agent to agent, live</h2>
+      <p class="small muted" id="feed-intro">Nothing yet. Create the traveller, save PayPal, then send the agent.</p>
+      <div class="feed" id="feed"></div>
+    </section>
+  </main>
+  <script src="/session.js"></script>
+  <script src="/traveler.js"></script>
+</body>
+</html>

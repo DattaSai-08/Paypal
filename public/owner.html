@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Innkeeper back office</title>
+  <link rel="stylesheet" href="/app.css">
+  <script src="https://cdn.jsdelivr.net/npm/ag-grid-community@34.3.1/dist/ag-grid-community.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/ag-charts-community@12.3.1/dist/umd/ag-charts-community.min.js"></script>
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand"><h1 id="prop-name">Back office</h1><span id="date-line"></span></div>
+    <nav class="nav"><a href="/">Front desk</a><a href="/traveler">Traveller's agent</a><a href="/owner" class="active">Owner</a></nav>
+  </header>
+  <main class="owner">
+    <div class="toolbar" id="auth" hidden>
+      <input id="key" type="password" autocomplete="off" placeholder="Configured owner key" style="max-width:320px">
+      <button class="primary" id="unlock">Open back office</button>
+    </div>
+    <div id="app" hidden>
+      <div class="toolbar">
+        <span class="pill" id="mode-pill"></span>
+        <span class="pill neutral" id="ai-pill"></span>
+        <span class="grow"></span>
+        <span class="small muted">Simulated date</span>
+        <button id="plus7">Advance 7 days</button>
+        <button id="plus1">Advance 1 day</button>
+        <button id="run-jobs">Run money loop now</button>
+        <button id="reset-clock">Reset clock</button>
+        <button id="reset-demo" class="danger">Reset demo data</button>
+      </div>
+      <div class="kpis" id="kpis"></div>
+      <div class="tabs" id="tabs">
+        <button data-tab="bookings" class="active">Bookings</button>
+        <button data-tab="money">Money</button>
+        <button data-tab="actions">Agent log</button>
+        <button data-tab="escalations">Needs you</button>
+        <button data-tab="policy">Policy</button>
+        <button data-tab="disputes">Disputes</button>
+      </div>
+      <section class="panel active" id="panel-bookings"><div class="grid" id="grid-bookings"></div><p class="small muted" style="margin-top:8px">Click a row to open the booking, its timeline and the guest transcript.</p></section>
+      <section class="panel" id="panel-money">
+        <div class="two">
+          <div><h3>Balance due by week</h3><p class="small muted">What the money loop will collect, from confirmed bookings.</p><div class="chart" id="cash-chart"></div></div>
+          <div><h3>Payouts to partners</h3><div class="grid" id="grid-payouts" style="height:220px"></div></div>
+        </div>
+        <h3 style="margin-top:18px">Every PayPal money event</h3>
+        <div class="grid" id="grid-payments"></div>
+      </section>
+      <section class="panel" id="panel-actions"><p class="small muted">Everything the agents did, with the PayPal call behind each money action.</p><div class="grid" id="grid-actions"></div></section>
+      <section class="panel" id="panel-escalations"><div id="esc-list"></div></section>
+      <section class="panel" id="panel-policy">
+        <div class="two">
+          <form id="policy-form" class="card">
+            <h3>Rules the agent must follow</h3>
+            <p class="small muted">The agent negotiates inside these; anything outside lands in Needs you.</p>
+            <div class="row">
+              <div class="field grow"><label>Deposit %</label><input name="deposit_pct" type="number" min="0" max="100"></div>
+              <div class="field grow"><label>Balance due (days before)</label><input name="balance_due_days" type="number" min="0"></div>
+              <div class="field grow"><label>Tax %</label><input name="tax_pct" type="number" min="0"></div>
+            </div>
+            <div class="row">
+              <div class="field grow"><label>Max discount %</label><input name="discount.max_pct" type="number" min="0" max="50"></div>
+              <div class="field grow"><label>Needs nights ≥</label><input name="discount.min_nights" type="number" min="1"></div>
+              <div class="field grow"><label>or lead days ≥</label><input name="discount.min_lead_days" type="number" min="0"></div>
+              <div class="field grow"><label>Peak cap %</label><input name="discount.peak_cap_pct" type="number" min="0"></div>
+            </div>
+            <div class="field"><label>Refunds the agent may approve alone, up to</label><input name="refund_auto_approve_limit" type="number" min="0"></div>
+            <div class="field"><label>Cancellation tiers (days before: refund %)</label><div id="tiers"></div></div>
+            <div class="field"><label>Agent tone</label><input name="agent_tone"></div>
+            <button class="primary" type="submit">Save policy</button>
+            <span class="small muted" id="policy-saved"></span>
+          </form>
+          <div class="card"><h3>How the agent explains it</h3><p id="policy-text" class="small"></p><h3 style="margin-top:14px">Connect another agent</h3><p class="small muted">Any MCP-capable assistant can book this property. Point it at:</p><pre id="mcp-url"></pre><p class="small muted">Tools: availability, quotes with policy-bound discounts, holds, deposit orders, saved-token payment, changes, cancellations and extras.</p></div>
+        </div>
+      </section>
+      <section class="panel" id="panel-disputes"><div class="toolbar"><button id="load-disputes">Load disputes from PayPal</button><span class="small muted">Innkeeper matches each dispute to a booking and assembles the evidence pack from the transcript, policy and payment records.</span></div><div id="dispute-list"></div></section>
+    </div>
+  </main>
+  <aside class="drawer" id="drawer"><button class="close" id="drawer-close">Close</button><div id="drawer-body"></div></aside>
+  <script src="/session.js"></script>
+  <script src="/owner.js"></script>
+</body>
+</html>
